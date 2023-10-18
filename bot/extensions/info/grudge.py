@@ -1,5 +1,6 @@
 from logging import getLogger
 from datetime import datetime
+from typing import Literal
 
 from discord import (
     ApplicationContext as AppCtx,
@@ -21,31 +22,60 @@ from bot.models import UserModel, GrudgeModel
 log = getLogger()
 
 
+GRUDGE_MODAL_ACTIONS = Literal["add", "edit"]
+
+
 class GrudgeModal(ui.Modal):
-    def __init__(self, old_title: str = None, old_content: str = None, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.add_item(ui.InputText(
-            label="Title", value=old_title, max_length=100, required=True
-        ))
-        self.add_item(ui.InputText(
-            label="Content", value=old_content, style=InputTextStyle.long, max_length=300, required=True
-        ))
+    __mode: GRUDGE_MODAL_ACTIONS
 
+    def __init__(self, mode: GRUDGE_MODAL_ACTIONS) -> None:
+        self.__mode = mode
 
-class AddGrudgeModal(GrudgeModal):
-    async def callback(self, interaction: Interaction) -> None:
+        match self.__mode:
+            case "add":
+                super().__init__(title="Add new grudge")
+            case "edit":
+                super().__init__(title="Edit grudge")
+
+        self.add_item(
+            ui.InputText(
+                label="Title",
+                max_length=100,
+                required=True
+            )
+        )
+
+        self.add_item(
+            ui.InputText(
+                label="Content",
+                style=InputTextStyle.long,
+                max_length=300,
+                required=True
+            )
+        )
+
+    def fill_fields(self, grudge_title: str, grudge_content: str) -> None:
+        self.children[0].value = grudge_title
+        self.children[1].value = grudge_content
+
+    async def __callback_add(self, interaction: Interaction) -> None:
         user = await UserModel.get(user_id=interaction.user.id)
         title = self.children[0].value
         content = self.children[1].value
-        await GrudgeModel.update(title=title, content=content, user=user)
-        await interaction.response.send_message("Done. New grudge created.", ephemeral=True)
+        await GrudgeModel.create(title=title, content=content, user=user)
 
-
-class EditGrudgeModal(GrudgeModal):
-    async def callback(self, interaction: Interaction):
+    async def __callback_edit(self, interaction: Interaction) -> None:
         self.new_title = self.children[0].value
         self.new_content = self.children[1].value
-        await interaction.response.send_message("Done. Grudge edited.", ephemeral=True)
+
+    async def callback(self, interaction: Interaction) -> None:
+        match self.__mode:
+            case "add":
+                await self.__callback_add(interaction)
+            case "edit":
+                await self.__callback_edit(interaction)
+
+        await interaction.response.send_message("Done!", ephemeral=True)
 
 
 class Grudge(Extension):
@@ -53,7 +83,7 @@ class Grudge(Extension):
 
     @grudges.command(name="add", description="Adds new grudge.")
     async def add_grudge(self, ctx: AppCtx) -> None:
-        await ctx.send_modal(AddGrudgeModal(title="New grudge"))
+        await ctx.send_modal(GrudgeModal("add"))
 
     @grudges.command(name="delete", description="Deletes grudge.")
     @option(name="grudge_id", description="Grudge's id.")
@@ -87,7 +117,9 @@ class Grudge(Extension):
             await ctx.respond("You can't edit this grudge.", ephemeral=True)
             return
 
-        modal = EditGrudgeModal(grudge.title, grudge.content, title="Edit Grudge")
+        modal = GrudgeModal("edit")
+        modal.fill_fields(grudge.title, grudge.content)
+
         await ctx.send_modal(modal)
         await modal.wait()
 
@@ -160,6 +192,7 @@ class Grudge(Extension):
         for grudge in grudges:
             if grudge.revenged:
                 grudges_strings.append(f"{grudge.grudge_id}: [R] {grudge.title}")
+                continue
             grudges_strings.append(f"{grudge.grudge_id}: {grudge.title}")
         embed.description = "\n".join(grudges_strings)
 
