@@ -56,7 +56,7 @@ class VTM(Extension):
         )
 
         embed.add_field(name="Result", value=f"{result} Successes")
-        embed.add_field(name="Is special?", value=special)
+        embed.add_field(name="Is special?", value=str(special))
 
         await ctx.respond(embed=embed)
 
