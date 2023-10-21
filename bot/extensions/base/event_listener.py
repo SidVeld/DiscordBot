@@ -16,12 +16,12 @@ class EventListener(Extension):
     async def on_application_command(self, ctx: Context) -> None:
         author = ctx.author
 
-        if user := await UserModel.get_or_none(discord_id=author.id):
+        if user := await UserModel.get_or_none(user_id=author.id):
             if user.username == author.name:
                 return
             await UserModel.update_from_dict(username=author.name)
         else:
-            await UserModel.create(discord_id=author.id, username=author.name)
+            await UserModel.create(user_id=author.id, username=author.name)
 
 
 def setup(bot: Bot) -> None:

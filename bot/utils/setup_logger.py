@@ -29,5 +29,10 @@ def setup_logger() -> None:
         handlers=[rich_handler, file_handler]
     )
 
+    if DEBUG_CONFIG.enabled and DEBUG_CONFIG.debug_orm:
+        logging.getLogger("tortoise").setLevel(logging.DEBUG)
+    else:
+        logging.getLogger("tortoise").setLevel(logging.WARNING)
+
     logging.getLogger("discord").setLevel(logging.WARNING)
     logging.getLogger("asyncio").setLevel(logging.WARNING)

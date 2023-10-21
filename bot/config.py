@@ -16,6 +16,7 @@ class ClientConfig:
 @dataclass
 class DebugConfig:
     enabled: bool
+    debug_orm: bool
     guilds: list[int]
 
 
