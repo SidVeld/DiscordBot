@@ -1,10 +1,11 @@
 import random
-
 from logging import getLogger
 
 from discord import ApplicationContext as AppCtx, Embed, Bot, option, SlashCommandGroup
 
 from bot.classes.extension import Extension
+
+from ._roll_colors import RollColors
 
 
 log = getLogger()
@@ -39,13 +40,13 @@ class VTM(Extension):
 
         if result > 0:
             title = "Success!"
-            color = 0xa7c957
+            color = RollColors.SUCCESS.value
         elif result == 0:
             title = "Unsuccessfully!"
-            color = 0xf2e8cf
+            color = RollColors.UNSUCCESSFUL.value
         else:
             title = "Failure!"
-            color = 0xbc4749
+            color = RollColors.FAILURE.value
 
         log.debug(f"{dices} : {result} -> {title}")
 
