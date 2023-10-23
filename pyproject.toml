@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "incarn"
-version = "0.0.2"
+version = "0.0.3"
 description = "A bot for friends and enemies."
 authors = ["SidVeld <sidveld@gmail.com>"]
 license = "MIT"
