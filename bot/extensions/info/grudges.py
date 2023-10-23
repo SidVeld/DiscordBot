@@ -25,7 +25,7 @@ log = getLogger()
 GRUDGE_MODAL_ACTIONS = Literal["add", "edit"]
 
 
-class GrudgeModal(ui.Modal):
+class GrudgesModal(ui.Modal):
     __mode: GRUDGE_MODAL_ACTIONS
 
     def __init__(self, mode: GRUDGE_MODAL_ACTIONS) -> None:
@@ -64,7 +64,7 @@ class GrudgeModal(ui.Modal):
         content = self.children[1].value
         await GrudgeModel.create(title=title, content=content, user=user)
 
-    async def __callback_edit(self, interaction: Interaction) -> None:
+    async def __callback_edit(self) -> None:
         self.new_title = self.children[0].value
         self.new_content = self.children[1].value
 
@@ -73,17 +73,17 @@ class GrudgeModal(ui.Modal):
             case "add":
                 await self.__callback_add(interaction)
             case "edit":
-                await self.__callback_edit(interaction)
+                await self.__callback_edit()
 
         await interaction.response.send_message("Done!", ephemeral=True)
 
 
-class Grudge(Extension):
+class Grudges(Extension):
     grudges = SlashCommandGroup("grudges", "The Great Book of Grudges")
 
     @grudges.command(name="add", description="Adds new grudge.")
     async def add_grudge(self, ctx: AppCtx) -> None:
-        await ctx.send_modal(GrudgeModal("add"))
+        await ctx.send_modal(GrudgesModal("add"))
 
     @grudges.command(name="delete", description="Deletes grudge.")
     @option(name="grudge_id", description="Grudge's id.")
@@ -117,7 +117,7 @@ class Grudge(Extension):
             await ctx.respond("You can't edit this grudge.", ephemeral=True)
             return
 
-        modal = GrudgeModal("edit")
+        modal = GrudgesModal("edit")
         modal.fill_fields(grudge.title, grudge.content)
 
         await ctx.send_modal(modal)
@@ -139,7 +139,7 @@ class Grudge(Extension):
 
             if grudge.revenged:
                 embed.title = f"[REVENGED] {embed.title}"
-                embed.add_field(name="Expunged at", value=f"<t:{int(grudge.created_at.timestamp())}:f>")
+                embed.add_field(name="Revenged at", value=f"<t:{int(grudge.created_at.timestamp())}:f>")
 
             embed.set_footer(text=f"ID: {grudge.grudge_id}")
 
@@ -149,58 +149,54 @@ class Grudge(Extension):
     def __get_pages(self, grudges: list[GrudgeModel]) -> list[Page]:
         pages = []
         raw_pages = self.__get_raw_pages(grudges)
-        log.debug(f"The raw pages is {raw_pages}")
         for raw_page in raw_pages:
             pages.append(self.__get_page(raw_page))
         return pages
 
     @grudges.command(name="list", description="Lists your grudges")
-    async def list_grudges(self, ctx: AppCtx) -> None:
-        grudges = await GrudgeModel.filter(user_id=ctx.author.id)
+    @option("compact", description="Should you view grudges in compact mode?")
+    async def list_grudges(self, ctx: AppCtx, compact: bool = True) -> None:
+        user = await UserModel.get(user_id=ctx.author.id)
+        grudges = await user.grudges.all()
+        grudges_len = len(grudges)
+        log.debug(f"{user.username} ({user.user_id}) has {grudges_len}")
 
-        if len(grudges) < 1:
+        if grudges_len < 1:
             await ctx.respond("No grudges!")
             return
 
-        buttons = [
-            PaginatorButton("first", "<<", style=ButtonStyle.gray),
-            PaginatorButton("prev", "<", style=ButtonStyle.green),
-            PaginatorButton("page_indicator", style=ButtonStyle.gray, disabled=True),
-            PaginatorButton("next", ">", style=ButtonStyle.green),
-            PaginatorButton("last", ">>", style=ButtonStyle.gray)
-        ]
-        paginator = Paginator(
-            self.__get_pages(grudges),
-            show_indicator=True,
-            use_default_buttons=False,
-            custom_buttons=buttons
-        )
-        await paginator.respond(ctx.interaction)
+        match compact:
+            case False:
+                buttons = [
+                    PaginatorButton("first", "<<", style=ButtonStyle.gray),
+                    PaginatorButton("prev", "<", style=ButtonStyle.green),
+                    PaginatorButton("page_indicator", style=ButtonStyle.gray, disabled=True),
+                    PaginatorButton("next", ">", style=ButtonStyle.green),
+                    PaginatorButton("last", ">>", style=ButtonStyle.gray)
+                ]
+                paginator = Paginator(
+                    self.__get_pages(grudges),
+                    show_indicator=True,
+                    use_default_buttons=False,
+                    custom_buttons=buttons
+                )
+                await paginator.respond(ctx.interaction)
 
-    @grudges.command(name="compact", description="Sends embed with sorted grudges.")
-    async def get_compact_grudges(self, ctx: AppCtx) -> None:
-        grudges = await GrudgeModel.filter(user_id=ctx.author.id).order_by("grudge_id")
+            case True:
+                embed = Embed(title="Grudges: compact")
+                grudges_strings = []
+                for grudge in grudges:
+                    title = f"[R] {grudge.title}" if grudge.revenged else grudge.title
+                    grudges_strings.append(f"`{grudge.grudge_id}`: {title}")
+                embed.description = "\n".join(grudges_strings)
+                embed.set_footer(text=f"Total: {len(grudges)}")
 
-        embed = Embed(title="Grudges")
+                await ctx.respond(embed=embed)
 
-        if len(grudges) < 1:
-            embed.description = "No grudges found!"
-            await ctx.respond(embed=embed)
-            return
-
-        grudges_strings = []
-        for grudge in grudges:
-            if grudge.revenged:
-                grudges_strings.append(f"{grudge.grudge_id}: [R] {grudge.title}")
-                continue
-            grudges_strings.append(f"{grudge.grudge_id}: {grudge.title}")
-        embed.description = "\n".join(grudges_strings)
-
-        await ctx.respond(embed=embed)
-
-    @grudges.command(name="mark_as_revenged", description="Marks grudge as revenged.")
+    @grudges.command(name="mark_as", description="Marks grudge as revenged or unrevenged.")
     @option(name="grudge_id", description="Grudge's id.")
-    async def mark_grudge_as_revenged(self, ctx: AppCtx, grudge_id: int) -> None:
+    @option(name="mark", description="New grudge's mark", choices=["revenged", "unrevenged"])
+    async def mark_grudge_as(self, ctx: AppCtx, grudge_id: int, mark: str) -> None:
         grudge = await GrudgeModel.get_or_none(grudge_id=grudge_id)
 
         if grudge is None:
@@ -212,16 +208,27 @@ class Grudge(Extension):
             await ctx.respond("You can't mark this grudge as revenged.", ephemeral=True)
             return
 
-        if grudge.revenged:
-            await ctx.respond("Already marked as revenged.", ephemeral=True)
-            return
+        match mark:
+            case "revenged":
+                if grudge.revenged:
+                    await ctx.respond("Already marked as revenged.", ephemeral=True)
+                    return
 
-        grudge.revenged = True
-        grudge.revenged_at = datetime.now()
-        await grudge.save()
+                grudge.revenged = True
+                grudge.revenged_at = datetime.now()
+                await grudge.save()
+
+            case "unrevenged":
+                if not grudge.revenged:
+                    await ctx.respond("Already marked as unrevenged.", ephemeral=True)
+                    return
+
+                grudge.revenged = False
+                grudge.revenged_at = None
+                await grudge.save()
 
         await ctx.respond("Done!", ephemeral=True)
 
 
 def setup(bot: Bot) -> None:
-    bot.add_cog(Grudge(bot))
+    bot.add_cog(Grudges(bot))
