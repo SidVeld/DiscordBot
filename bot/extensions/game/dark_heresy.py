@@ -8,15 +8,12 @@ from bot.classes.incarn_bot import IncarnBot
 from ._roll_colors import RollColors
 
 
-ROLL_MODS = [number for number in range(60, -70, -10)]
-
-
 class DarkHeresy(Extension):
     dark_heresy = SlashCommandGroup("dark_heresy", "Commands for dark heresy!")
 
     @dark_heresy.command(name="roll")
     @option("target", description="Roll target.")
-    @option("mod", description="Roll result modification.", choices=ROLL_MODS)
+    @option("mod", description="Roll result modification.", min_value=-60, max_value=60)
     async def dh_roll(self, ctx: AppCtx, target: int, mod: int = 0) -> None:
         roll = random.randint(1, 100)
 
