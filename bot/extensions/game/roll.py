@@ -24,8 +24,8 @@ class Roll(Extension):
     @slash_command(name="roll", description="Roll the dice!")
     @option("amount", description="Amount of dices to roll.", min_value=1, max_value=15)
     @option("sides", description="Amount of dice's sides.", min_value=1, max_value=1000)
-    @option("target", description="Success threshold", min_value=1)
-    @option("failures", description="Failure threshold", min_value=1)
+    @option("target", description="Success threshold", min_value=0)
+    @option("fail", description="Failure threshold", min_value=0)
     async def roll(self, ctx: AppCtx, amount: int, sides: int, target: int = 0, fail: int = 0) -> None:
         dices = [random.randint(1, sides) for _ in range(amount)]
 
@@ -36,7 +36,6 @@ class Roll(Extension):
 
         if target:
             successes, failures = self._get_successes(dices, target, fail)
-
             result_embed.add_field(name="Successes", value=str(successes))
             result_embed.add_field(name="Failures", value=str(fail))
             result_embed.add_field(name="Total", value=str(successes - failures))
