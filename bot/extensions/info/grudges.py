@@ -94,7 +94,7 @@ class Grudges(Extension):
             await ctx.respond("Grudge with provided id is not exists.", ephemeral=True)
             return
 
-        user: UserModel = await grudge.user
+        user = await grudge.user
         if user.user_id != ctx.author.id:
             await ctx.respond("You can't delete this grudge.", ephemeral=True)
             return
@@ -112,7 +112,7 @@ class Grudges(Extension):
             await ctx.respond("Grudge with provided id is not exists.", ephemeral=True)
             return
 
-        user: UserModel = await grudge.user
+        user = await grudge.user
         if user.user_id != ctx.author.id:
             await ctx.respond("You can't edit this grudge.", ephemeral=True)
             return
