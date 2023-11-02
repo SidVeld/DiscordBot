@@ -1,0 +1,26 @@
+client:
+  prefix: "prefix!"
+  token: "SecretToken!"
+  owners: []
+  sync_commands: true
+
+
+debug:
+  enabled: true
+  debug_orm: true
+  guilds: []
+
+
+database:
+  driver: "postgres"
+  init: false
+  
+  postgres_config:                     
+    host: "localhost"
+    port: 5432                              
+    username: "username"
+    password: "password"
+    database: "database"
+  
+  sqlite_config:
+    database_path: "data/database.db"

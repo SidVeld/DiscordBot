@@ -9,7 +9,7 @@ from .utils import DatabaseController, ExtensionLoader
 log = getLogger()
 
 try:
-    DatabaseController.setup_database()
+    DatabaseController.init_database()
     bot = IncarnBot()
     ExtensionLoader.load_extensions(bot)
     bot.run()
