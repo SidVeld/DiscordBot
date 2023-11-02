@@ -23,11 +23,12 @@ class DatabaseController:
 
     @staticmethod
     async def __init__postgres() -> None:
-        username = DATABASE_CONFIG.username
-        password = DATABASE_CONFIG.password
-        host = DATABASE_CONFIG.host
-        port = DATABASE_CONFIG.port
-        database = DATABASE_CONFIG.database
+        config = DATABASE_CONFIG.postgres_config
+        username = config.username
+        password = config.password
+        host = config.host
+        port = config.port
+        database = config.database
         await Tortoise.init(
             db_url=f"postgres://{username}:{password}@{host}:{port}/{database}",
             modules={"models": [MODELS_PACKAGE]}
@@ -35,8 +36,9 @@ class DatabaseController:
 
     @staticmethod
     async def __init_sqlite() -> None:
+        config = DATABASE_CONFIG.sqlite_config
         await Tortoise.init(
-            db_url=f"sqlite://{DATABASE_CONFIG.sqlite_path}",
+            db_url=f"sqlite://{config.database_path}",
             modules={"models": [MODELS_PACKAGE]}
         )
 
@@ -60,5 +62,8 @@ class DatabaseController:
         log.info("Database setup finished")
 
     @staticmethod
-    def setup_database() -> None:
+    def init_database() -> None:
+        if not DATABASE_CONFIG.init:
+            log.debug("Database init is False. Skipping initialization")
+            return
         tortoise.run_async(DatabaseController.__run_database_init())
