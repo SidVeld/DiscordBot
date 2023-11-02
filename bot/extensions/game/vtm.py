@@ -5,7 +5,7 @@ from discord import ApplicationContext as AppCtx, Embed, Bot, option, SlashComma
 
 from bot.classes.extension import Extension
 
-from ._roll_colors import RollColors
+from ._roll_colors import RollResultColors
 
 
 log = getLogger()
@@ -97,13 +97,13 @@ class VTM(Extension):
 
         if result > 0:
             title = "Success!"
-            color = RollColors.SUCCESS.value
+            color = RollResultColors.SUCCESS.value
         elif result == 0:
             title = "Unsuccessfully!"
-            color = RollColors.UNSUCCESSFUL.value
+            color = RollResultColors.UNSUCCESSFUL.value
         else:
             title = "Failure!"
-            color = RollColors.FAILURE.value
+            color = RollResultColors.FAILURE.value
 
         log.debug(f"{ctx.author.name} rolls (t{difficulty}) {dices} : {result} -> {title}")
 

@@ -5,7 +5,7 @@ from discord import SlashCommandGroup, option, ApplicationContext as AppCtx, Emb
 from bot.classes.extension import Extension
 from bot.classes.incarn_bot import IncarnBot
 
-from ._roll_colors import RollColors
+from ._roll_colors import RollResultColors
 
 
 class DarkHeresy(Extension):
@@ -19,10 +19,10 @@ class DarkHeresy(Extension):
 
         if roll <= target + mod:
             result = "Success"
-            color = RollColors.SUCCESS.value
+            color = RollResultColors.SUCCESS.value
         else:
             result = "Failure"
-            color = RollColors.FAILURE.value
+            color = RollResultColors.FAILURE.value
 
         if roll == 1 or roll == 100:
             result = f"Critical {result.lower()}"
