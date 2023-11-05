@@ -69,7 +69,7 @@ class VTM(Extension):
         self,
         ctx: AppCtx,
         amount: int,
-        difficulty: int,
+        difficulty: int = 6,
         mod: int = 0,
         wounds: str = "None",
         special: bool = False
