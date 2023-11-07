@@ -1,6 +1,7 @@
 import random
 
-from discord import SlashCommandGroup, option, ApplicationContext as AppCtx, Embed
+from discord import ApplicationContext as AppCtx
+from discord import Embed, SlashCommandGroup, option
 
 from bot.classes.extension import Extension
 from bot.classes.incarn_bot import IncarnBot
@@ -39,3 +40,4 @@ class DarkHeresy(Extension):
 
 def setup(bot: IncarnBot) -> None:
     bot.add_cog(DarkHeresy(bot))
+

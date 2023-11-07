@@ -1,6 +1,5 @@
-from .user import UserModel
 from .grudge import GrudgeModel
-
+from .user import UserModel
 
 __all__ = [
     "UserModel",

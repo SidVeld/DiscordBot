@@ -1,12 +1,12 @@
 import platform
-from git import Repo
 from logging import getLogger
 
 import discord
-from discord import ApplicationContext as AppCtx, slash_command, Embed, Bot
+from discord import ApplicationContext as AppCtx
+from discord import Bot, Embed, slash_command
+from git import Repo
 
 from bot.classes.extension import Extension
-
 
 log = getLogger()
 

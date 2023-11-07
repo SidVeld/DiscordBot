@@ -1,7 +1,7 @@
 import random
 from pathlib import Path
-from tomllib import load
 
+from tomllib import load
 
 PYPROJECT_PATH = Path("pyproject.toml")
 

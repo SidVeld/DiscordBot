@@ -1,11 +1,10 @@
 import random
-
 from logging import getLogger
 
-from discord import ApplicationContext as AppCtx, Embed, Bot, option, SlashCommandGroup
+from discord import ApplicationContext as AppCtx
+from discord import Bot, Embed, SlashCommandGroup, option
 
 from bot.classes.extension import Extension
-
 
 COINS = ["●", "○"]
 
