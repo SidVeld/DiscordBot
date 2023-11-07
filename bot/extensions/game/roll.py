@@ -1,5 +1,8 @@
 import random
-from discord import slash_command, ApplicationContext as AppCtx, option, Embed
+
+from discord import ApplicationContext as AppCtx
+from discord import Embed, option, slash_command
+
 from bot.classes.extension import Extension
 from bot.classes.incarn_bot import IncarnBot
 

@@ -1,7 +1,7 @@
-import dacite
-
 from dataclasses import dataclass
 from pathlib import Path
+
+import dacite
 from yaml import safe_load
 
 

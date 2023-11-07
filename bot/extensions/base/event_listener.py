@@ -1,11 +1,10 @@
-from discord import Cog, Bot
+from logging import getLogger
+
+from discord import Bot, Cog
 from discord.ext.commands import Context
 
 from bot.classes.extension import Extension
 from bot.models import UserModel
-
-from logging import getLogger
-
 
 log = getLogger()
 

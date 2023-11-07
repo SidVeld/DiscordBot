@@ -19,10 +19,13 @@ gitpython = "^3.1.40"
 
 
 [tool.poetry.group.dev.dependencies]
-flake8 = "^6.1.0"
-flake8-quotes = "^3.3.2"
-flake8-return = "^1.2.0"
 taskipy = "^1.12.0"
+ruff = "^0.1.4"
+
+
+[tool.ruff]
+select = ["F", "E", "W", "Q", "RET", "I", "C90"]
+line-length = 120
 
 
 [build-system]
