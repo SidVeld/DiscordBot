@@ -58,9 +58,9 @@ class LimbusCompany(Extension):
             description=" - ".join(coins) + f" | ***{result}***",
             color=COLORS[color] if color is not None else Embed.Empty
         )
-        embed.add_field(name="Coins", value=amount)
-        embed.add_field(name="Power", value=power)
-        embed.add_field(name="Coin power", value=coin_power)
+        embed.add_field(name="Coins", value=str(amount))
+        embed.add_field(name="Power", value=str(power))
+        embed.add_field(name="Coin power", value=str(coin_power))
         embed.add_field(name="Result", value=f"{power} + {additive_power} = {result}")
 
         await ctx.respond(embed=embed, ephemeral=hidden)
