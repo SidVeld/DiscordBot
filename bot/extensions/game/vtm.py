@@ -23,15 +23,15 @@ MESSAGE_TEMPLATE = """
 WOUNDS = {
     "None": 0,
     "Bruised": 0,
-    "Hurt": -1,
-    "Injured": -1,
-    "Wounded": -2,
-    "Mauled": -2,
-    "Crippled": -5
+    "Hurt": 1,
+    "Injured": 1,
+    "Wounded": 2,
+    "Mauled": 2,
+    "Crippled": 5
 }
 
 
-WOUNDS_NAMES = [f"{name} ({penalty})" for name, penalty in WOUNDS.items()]
+WOUNDS_NAMES = [f"{name} (-{penalty})" for name, penalty in WOUNDS.items()]
 
 
 class VTM(Extension):
@@ -105,7 +105,18 @@ class VTM(Extension):
             title = "Failure!"
             color = RollResultColors.FAILURE.value
 
-        log.debug(f"{ctx.author.name} rolls (t{difficulty}) {dices} : {result} -> {title}")
+        log.debug(
+            "VTM: '{}' | A: {} | {} | D: {} | M: {} | W: {} | S: {} | R: {}".format(
+                ctx.author.name,
+                amount,
+                dices,
+                difficulty,
+                mod,
+                wound_penalty,
+                special,
+                result
+            )
+        )
 
         description = MESSAGE_TEMPLATE.format(
             " - ".join(str(die) for die in dices),
@@ -118,9 +129,9 @@ class VTM(Extension):
             color=color
         )
 
-        embed.add_field(name="Amount", value=amount)
-        embed.add_field(name="Difficulty", value=difficulty)
-        embed.add_field(name="Modifiers", value=mod)
+        embed.add_field(name="Amount", value=str(amount))
+        embed.add_field(name="Difficulty", value=str(difficulty))
+        embed.add_field(name="Modifiers", value=str(mod))
         embed.add_field(name="Wounds", value=wounds)
         embed.add_field(name="Is special?", value=f"Yes (added {add_rolls})" if special else "No")
         embed.add_field(name="Result", value=f"{result} Successes")
