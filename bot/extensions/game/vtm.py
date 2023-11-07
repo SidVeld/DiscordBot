@@ -53,7 +53,7 @@ class VTM(Extension):
     @option(
         name="mod",
         description="Bonus dices.",
-        min_value=1,
+        min_value=0,
         max_value=10
     )
     @option(
@@ -132,7 +132,7 @@ class VTM(Extension):
         embed.add_field(name="Amount", value=str(amount))
         embed.add_field(name="Difficulty", value=str(difficulty))
         embed.add_field(name="Modifiers", value=str(mod))
-        embed.add_field(name="Wounds", value=wounds)
+        embed.add_field(name="Wounds", value="None" if wound_name == "None" else wounds)
         embed.add_field(name="Is special?", value=f"Yes (added {add_rolls})" if special else "No")
         embed.add_field(name="Result", value=f"{result} Successes")
 
