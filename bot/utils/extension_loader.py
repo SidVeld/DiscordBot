@@ -1,12 +1,11 @@
 import importlib
 import inspect
 import pkgutil
-from typing import Iterator
 from logging import getLogger
+from typing import Iterator
 
 from .. import extensions
 from ..classes.incarn_bot import IncarnBot
-
 
 log = getLogger()
 

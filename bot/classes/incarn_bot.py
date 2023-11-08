@@ -1,9 +1,8 @@
 from logging import getLogger
 
-from discord import Intents, AllowedMentions, ActivityType, Activity, Bot
+from discord import Activity, ActivityType, AllowedMentions, Bot, Intents
 
 from ..config import CLIENT_CONFIG
-
 
 log = getLogger()
 

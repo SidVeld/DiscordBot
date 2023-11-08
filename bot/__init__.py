@@ -1,7 +1,6 @@
 from rich.console import Console
 
-from .utils import setup_logger, get_version, get_quote
-
+from .utils import get_quote, get_version, setup_logger
 
 VERSION = get_version()
 QUOTE = get_quote()

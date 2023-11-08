@@ -1,11 +1,10 @@
 import random
-
 from logging import getLogger
 
-from discord import ApplicationContext as AppCtx, Embed, Bot, option, SlashCommandGroup
+from discord import ApplicationContext as AppCtx
+from discord import Bot, Embed, SlashCommandGroup, option
 
 from bot.classes.extension import Extension
-
 
 COINS = ["●", "○"]
 
@@ -40,7 +39,7 @@ class LimbusCompany(Extension):
         amount: int = 1,
         power: int = 0,
         coin_power: int = 1,
-        color: str = None,
+        color: str = "None",
         hidden: bool = False
     ) -> None:
         coins = []
@@ -56,11 +55,11 @@ class LimbusCompany(Extension):
         embed = Embed(
             title="Coinflip result",
             description=" - ".join(coins) + f" | ***{result}***",
-            color=COLORS[color] if color is not None else Embed.Empty
+            color=COLORS[color] if color != "None" else Embed.Empty
         )
-        embed.add_field(name="Coins", value=amount)
-        embed.add_field(name="Power", value=power)
-        embed.add_field(name="Coin power", value=coin_power)
+        embed.add_field(name="Coins", value=str(amount))
+        embed.add_field(name="Power", value=str(power))
+        embed.add_field(name="Coin power", value=str(coin_power))
         embed.add_field(name="Result", value=f"{power} + {additive_power} = {result}")
 
         await ctx.respond(embed=embed, ephemeral=hidden)

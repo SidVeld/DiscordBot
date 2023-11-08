@@ -1,11 +1,10 @@
-from discord import Cog, Bot
+from logging import getLogger
+
+from discord import Bot, Cog
 from discord.ext.commands import Context
 
 from bot.classes.extension import Extension
 from bot.models import UserModel
-
-from logging import getLogger
-
 
 log = getLogger()
 
@@ -19,7 +18,8 @@ class EventListener(Extension):
         if user := await UserModel.get_or_none(user_id=author.id):
             if user.username == author.name:
                 return
-            await UserModel.update_from_dict(username=author.name)
+            user.username = author.name
+            await user.save()
         else:
             await UserModel.create(user_id=author.id, username=author.name)
 

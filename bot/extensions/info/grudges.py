@@ -1,23 +1,14 @@
-from logging import getLogger
 from datetime import datetime
+from logging import getLogger
 from typing import Literal
 
-from discord import (
-    ApplicationContext as AppCtx,
-    Embed,
-    Bot,
-    SlashCommandGroup,
-    ui,
-    InputTextStyle,
-    ButtonStyle,
-    option
-)
+from discord import ApplicationContext as AppCtx
+from discord import Bot, ButtonStyle, Embed, InputTextStyle, SlashCommandGroup, option, ui
+from discord.ext.pages import Page, Paginator, PaginatorButton
 from discord.interactions import Interaction
-from discord.ext.pages import Paginator, Page, PaginatorButton
 
 from bot.classes.extension import Extension
-from bot.models import UserModel, GrudgeModel
-
+from bot.models import GrudgeModel, UserModel
 
 log = getLogger()
 

@@ -18,3 +18,4 @@ class GrudgeModel(Model):
 
     class Meta:
         table = "grudge"
+        table_description = "This table contains the user records of the grudges extension."

@@ -1,10 +1,8 @@
 from logging import getLogger
 
+from .classes.errors import DatabaseError, UnsupportedDatabaseError
 from .classes.incarn_bot import IncarnBot
-from .classes.errors import UnsupportedDatabaseError, DatabaseError
-
 from .utils import DatabaseController, ExtensionLoader
-
 
 log = getLogger()
 

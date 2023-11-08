@@ -13,3 +13,4 @@ class UserModel(Model):
 
     class Meta:
         table = "discord_user"
+        table_description = "This table contains the users interacting with the bot."

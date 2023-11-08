@@ -1,12 +1,10 @@
 import logging
 from logging import FileHandler, Formatter
-
 from pathlib import Path
 
 from rich.logging import RichHandler
 
 from ..config import DEBUG_CONFIG
-
 
 DATE_FORMAT = "[%x | %X]"
 RICH_FORMAT = "%(message)s"

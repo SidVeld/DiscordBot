@@ -1,12 +1,11 @@
-import tortoise
-
-from logging import getLogger
-from tortoise import Tortoise
 from enum import Enum
+from logging import getLogger
 
-from ..config import DATABASE_CONFIG
+import tortoise
+from tortoise import Tortoise
+
 from ..classes.errors import UnsupportedDatabaseError
-
+from ..config import DATABASE_CONFIG
 
 log = getLogger()
 
