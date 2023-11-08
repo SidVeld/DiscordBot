@@ -97,13 +97,13 @@ class VTM(Extension):
 
         if result > 0:
             title = "Success!"
-            color = RollResultColors.SUCCESS.value
+            color = RollResultColors.SUCCESS
         elif result == 0:
             title = "Unsuccessfully!"
-            color = RollResultColors.UNSUCCESSFUL.value
+            color = RollResultColors.UNSUCCESSFUL
         else:
             title = "Failure!"
-            color = RollResultColors.FAILURE.value
+            color = RollResultColors.FAILURE
 
         log.debug(
             "VTM: '{}' | A: {} | {} | D: {} | M: {} | W: {} | S: {} | R: {}".format(

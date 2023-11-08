@@ -20,10 +20,10 @@ class DarkHeresy(Extension):
 
         if roll <= target + mod:
             result = "Success"
-            color = RollResultColors.SUCCESS.value
+            color = RollResultColors.SUCCESS
         else:
             result = "Failure"
-            color = RollResultColors.FAILURE.value
+            color = RollResultColors.FAILURE
 
         if roll == 1 or roll == 100:
             result = f"Critical {result.lower()}"

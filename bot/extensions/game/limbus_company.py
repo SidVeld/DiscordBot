@@ -39,7 +39,7 @@ class LimbusCompany(Extension):
         amount: int = 1,
         power: int = 0,
         coin_power: int = 1,
-        color: str = None,
+        color: str = "None",
         hidden: bool = False
     ) -> None:
         coins = []
@@ -55,7 +55,7 @@ class LimbusCompany(Extension):
         embed = Embed(
             title="Coinflip result",
             description=" - ".join(coins) + f" | ***{result}***",
-            color=COLORS[color] if color is not None else Embed.Empty
+            color=COLORS[color] if color != "None" else Embed.Empty
         )
         embed.add_field(name="Coins", value=str(amount))
         embed.add_field(name="Power", value=str(power))
