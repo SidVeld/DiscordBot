@@ -149,10 +149,9 @@ class Grudges(Extension):
     async def list_grudges(self, ctx: AppCtx, compact: bool = True) -> None:
         user = await UserModel.get(user_id=ctx.author.id)
         grudges = await user.grudges.all()
-        grudges_len = len(grudges)
-        log.debug(f"{user.username} ({user.user_id}) has {grudges_len}")
+        log.debug("%s (%s) has %s", user.username, user.user_id, len(grudges))
 
-        if grudges_len < 1:
+        if len(grudges) < 1:
             await ctx.respond("No grudges!")
             return
 
