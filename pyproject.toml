@@ -24,7 +24,7 @@ ruff = "^0.1.4"
 
 
 [tool.ruff]
-select = ["F", "E", "W", "Q", "RET", "I", "C90"]
+select = ["F", "E", "W", "Q", "RET", "I", "C90", "G", "LOG"]
 line-length = 120
 
 

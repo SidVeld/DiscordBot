@@ -106,16 +106,15 @@ class VTM(Extension):
             color = RollResultColors.FAILURE
 
         log.debug(
-            "VTM: '{}' | A: {} | {} | D: {} | M: {} | W: {} | S: {} | R: {}".format(
-                ctx.author.name,
-                amount,
-                dices,
-                difficulty,
-                mod,
-                wound_penalty,
-                special,
-                result
-            )
+            "VTM: '%s' | A: %s | %s | D: %s | M: %s | W: %s | S: %s | R: %s",
+            ctx.author.name,
+            amount,
+            dices,
+            difficulty,
+            mod,
+            wound_penalty,
+            special,
+            result
         )
 
         description = MESSAGE_TEMPLATE.format(

@@ -35,7 +35,7 @@ class ExtensionLoader:
     @staticmethod
     def load_extensions(bot: IncarnBot) -> None:
         extensions_set = set(ExtensionLoader._walk_extensions())
-        log.debug(f"Extension set is {extensions_set}")
+        log.debug("Extension set is %s", extensions_set)
 
         for extension in extensions_set:
             bot.load_extension(extension)

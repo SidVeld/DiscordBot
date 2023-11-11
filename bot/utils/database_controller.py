@@ -53,7 +53,7 @@ class DatabaseController:
                 log.debug("Using sqlite database driver")
                 await DatabaseController.__init_sqlite()
             case _:
-                log.warning(f"Unsupported database driver: {DATABASE_CONFIG.driver.lower()}")
+                log.warning("Unsupported database driver: %s", DATABASE_CONFIG.driver.lower())
                 raise UnsupportedDatabaseError()
 
         await Tortoise.generate_schemas()
