@@ -82,9 +82,9 @@ DATABASE_CONFIG = DatabaseConfig(
     PostgresConfig(
         os.getenv("POSTGRES_HOST"),
         os.getenv("POSTGRES_PORT"),
-        os.getenv("POSTGRES_USERNAME"),
+        os.getenv("POSTGRES_USER"),
         os.getenv("POSTGRES_PASSWORD"),
-        os.getenv("POSTGRES_DATABASE")
+        os.getenv("POSTGRES_DB")
     ),
     SqliteConfig(os.getenv("SQLITE_DATABASE"))
 )

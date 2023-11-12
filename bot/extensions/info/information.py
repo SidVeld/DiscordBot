@@ -4,11 +4,11 @@ from logging import getLogger
 import discord
 from discord import ApplicationContext as AppCtx
 from discord import Bot, Embed, slash_command
-from git import Repo
 
 from bot.classes.extension import Extension
+from bot.utils import get_version
 
-log = getLogger()
+log = getLogger(__name__)
 
 
 class Information(Extension):
@@ -24,16 +24,10 @@ class Information(Extension):
 
     @slash_command(name="revision", description="Sends bot's revision")
     async def revision_command(self, ctx: AppCtx) -> None:
-        repository = Repo(".")
         embed = Embed(title="Revision")
-        embed.add_field(name="Branch", value=repository.active_branch.name)
+        embed.add_field(name="Incarn", value=get_version())
         embed.add_field(name="Pycord", value=discord.__version__)
         embed.add_field(name="Python", value=platform.python_version())
-        embed.add_field(
-            name="Commit",
-            value=repository.active_branch.commit,
-            inline=False
-        )
 
         await ctx.respond(embed=embed)
 
