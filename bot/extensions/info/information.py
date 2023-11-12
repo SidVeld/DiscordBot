@@ -15,7 +15,7 @@ class Information(Extension):
     @slash_command(name="ping", description="Sends bot's latency")
     async def ping_command(self, ctx: AppCtx) -> None:
         latency = round(self.bot.latency * 1000)
-        log.debug(f"Gateway Latency: {latency}ms")
+        log.debug("Gateway Latency: %s ms", latency)
         ping_embed = Embed(
             title="Pong!",
             description=f"Gateway Latency: {latency}ms"

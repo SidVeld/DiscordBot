@@ -2,5 +2,5 @@ class DatabaseError(Exception):
     pass
 
 
-class UnsupportedDatabaseError(DatabaseError):
+class DatabaseUnsupportedDriverError(DatabaseError):
     pass
