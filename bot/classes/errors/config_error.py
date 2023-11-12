@@ -1,0 +1,2 @@
+class ConfigWrongBoolValueError(Exception):
+    pass

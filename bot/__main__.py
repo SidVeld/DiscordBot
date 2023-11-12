@@ -1,6 +1,6 @@
 from logging import getLogger
 
-from .classes.errors import DatabaseError, UnsupportedDatabaseError
+from .classes.errors import DatabaseError, DatabaseUnsupportedDriverError
 from .classes.incarn_bot import IncarnBot
 from .utils import DatabaseController, ExtensionLoader
 
@@ -14,7 +14,7 @@ try:
 
 except DatabaseError as database_error:
 
-    if isinstance(database_error, UnsupportedDatabaseError):
+    if isinstance(database_error, DatabaseUnsupportedDriverError):
         log.fatal("Using wrong database driver. Check configuration file.")
         exit(1001)
 

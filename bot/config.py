@@ -1,8 +1,24 @@
+import os
 from dataclasses import dataclass
-from pathlib import Path
 
-import dacite
-from yaml import safe_load
+from dotenv import load_dotenv
+
+from .classes.errors import ConfigWrongBoolValueError
+
+
+def get_bool(env_value: str) -> bool:
+    env_value = env_value.lower()
+    match env_value:
+        case "true":
+            return True
+        case "false":
+            return False
+        case _:
+            raise ConfigWrongBoolValueError()
+
+
+def get_list(env_value: str) -> list:
+    return [item for item in env_value.split(",")]
 
 
 @dataclass
@@ -31,7 +47,7 @@ class PostgresConfig:
 
 @dataclass
 class SqliteConfig:
-    database_path: str
+    database: str
 
 
 @dataclass
@@ -42,16 +58,33 @@ class DatabaseConfig:
     sqlite_config: SqliteConfig
 
 
-CONFIG_PATH = Path("config.yml")
-CONFIG_DATA = safe_load(CONFIG_PATH.open("r", encoding="utf-8"))
+load_dotenv()
 
-DATABASE_CONFIG_DATA = CONFIG_DATA["database"]
 
-CLIENT_CONFIG = dacite.from_dict(ClientConfig, CONFIG_DATA["client"])
-DEBUG_CONFIG = dacite.from_dict(DebugConfig, CONFIG_DATA["debug"])
+CLIENT_CONFIG = ClientConfig(
+    os.getenv("BOT_PREFIX"),
+    os.getenv("BOT_TOKEN"),
+    get_list(os.getenv("BOT_OWNERS")),
+    get_bool(os.getenv("BOT_SYNC_COMMANDS"))
+)
+
+
+DEBUG_CONFIG = DebugConfig(
+    get_bool(os.getenv("DEBUG_ENABLED")),
+    get_bool(os.getenv("DEBUG_ORM")),
+    get_list(os.getenv("DEBUG_GUILDS"))
+)
+
+
 DATABASE_CONFIG = DatabaseConfig(
-    DATABASE_CONFIG_DATA["driver"],
-    DATABASE_CONFIG_DATA["init"],
-    dacite.from_dict(PostgresConfig, DATABASE_CONFIG_DATA["postgres_config"]),
-    dacite.from_dict(SqliteConfig, DATABASE_CONFIG_DATA["sqlite_config"]),
+    os.getenv("DATABASE_DRIVER"),
+    get_bool(os.getenv("DATABASE_INIT")),
+    PostgresConfig(
+        os.getenv("POSTGRES_HOST"),
+        os.getenv("POSTGRES_PORT"),
+        os.getenv("POSTGRES_USERNAME"),
+        os.getenv("POSTGRES_PASSWORD"),
+        os.getenv("POSTGRES_DATABASE")
+    ),
+    SqliteConfig(os.getenv("SQLITE_DATABASE"))
 )

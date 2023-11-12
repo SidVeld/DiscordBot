@@ -4,7 +4,7 @@ from logging import getLogger
 import tortoise
 from tortoise import Tortoise
 
-from ..classes.errors import UnsupportedDatabaseError
+from ..classes.errors import DatabaseUnsupportedDriverError
 from ..config import DATABASE_CONFIG
 
 log = getLogger()
@@ -37,7 +37,7 @@ class DatabaseController:
     async def __init_sqlite() -> None:
         config = DATABASE_CONFIG.sqlite_config
         await Tortoise.init(
-            db_url=f"sqlite://{config.database_path}",
+            db_url=f"sqlite://{config.database}",
             modules={"models": [MODELS_PACKAGE]}
         )
 
@@ -54,7 +54,7 @@ class DatabaseController:
                 await DatabaseController.__init_sqlite()
             case _:
                 log.warning("Unsupported database driver: %s", DATABASE_CONFIG.driver.lower())
-                raise UnsupportedDatabaseError()
+                raise DatabaseUnsupportedDriverError()
 
         await Tortoise.generate_schemas()
 
