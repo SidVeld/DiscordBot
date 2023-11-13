@@ -52,10 +52,11 @@ class SqliteConfig:
 
 @dataclass
 class DatabaseConfig:
-    driver: str
-    init: bool
-    postgres_config: PostgresConfig
-    sqlite_config: SqliteConfig
+    host: str
+    port: str
+    username: str
+    password: str
+    database: str
 
 
 load_dotenv()
@@ -77,14 +78,9 @@ DEBUG_CONFIG = DebugConfig(
 
 
 DATABASE_CONFIG = DatabaseConfig(
-    os.getenv("DATABASE_DRIVER"),
-    get_bool(os.getenv("DATABASE_INIT")),
-    PostgresConfig(
-        os.getenv("POSTGRES_HOST"),
-        os.getenv("POSTGRES_PORT"),
-        os.getenv("POSTGRES_USER"),
-        os.getenv("POSTGRES_PASSWORD"),
-        os.getenv("POSTGRES_DB")
-    ),
-    SqliteConfig(os.getenv("SQLITE_DATABASE"))
+    os.getenv("POSTGRES_HOST"),
+    os.getenv("POSTGRES_PORT"),
+    os.getenv("POSTGRES_USER"),
+    os.getenv("POSTGRES_PASSWORD"),
+    os.getenv("POSTGRES_DB")
 )
