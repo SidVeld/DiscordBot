@@ -3,18 +3,18 @@ from dataclasses import dataclass
 
 from dotenv import load_dotenv
 
-from .classes.errors import ConfigWrongBoolValueError
+from .classes.exceptions import UnconvertibleVariableError
 
 
 def get_bool(env_value: str) -> bool:
-    env_value = env_value.lower()
-    match env_value:
+    match env_value.lower():
         case "true":
             return True
         case "false":
             return False
         case _:
-            raise ConfigWrongBoolValueError()
+            message = f"Cannot convert '{env_value}' to True or False."
+            raise UnconvertibleVariableError(message)
 
 
 def get_list(env_value: str) -> list:
@@ -66,14 +66,12 @@ CLIENT_CONFIG = ClientConfig(
     os.getenv("BOT_PREFIX"),
     os.getenv("BOT_TOKEN"),
     get_list(os.getenv("BOT_OWNERS")),
-    get_bool(os.getenv("BOT_SYNC_COMMANDS"))
+    get_bool(os.getenv("BOT_SYNC_COMMANDS")),
 )
 
 
 DEBUG_CONFIG = DebugConfig(
-    get_bool(os.getenv("DEBUG_ENABLED")),
-    get_bool(os.getenv("DEBUG_ORM")),
-    get_list(os.getenv("DEBUG_GUILDS"))
+    get_bool(os.getenv("DEBUG_ENABLED")), get_bool(os.getenv("DEBUG_ORM")), get_list(os.getenv("DEBUG_GUILDS"))
 )
 
 
@@ -82,5 +80,5 @@ DATABASE_CONFIG = DatabaseConfig(
     os.getenv("POSTGRES_PORT"),
     os.getenv("POSTGRES_USER"),
     os.getenv("POSTGRES_PASSWORD"),
-    os.getenv("POSTGRES_DB")
+    os.getenv("POSTGRES_DB"),
 )

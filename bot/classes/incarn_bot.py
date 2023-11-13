@@ -10,13 +10,7 @@ log = getLogger(__name__)
 
 class IncarnBot(Bot):
     def __init__(self) -> None:
-        intents = Intents(
-            members=True,
-            messages=True,
-            message_content=True,
-            guilds=True,
-            bans=True
-        )
+        intents = Intents(members=True, messages=True, message_content=True, guilds=True, bans=True)
 
         super().__init__(
             command_prefix=CLIENT_CONFIG.prefix,
@@ -24,7 +18,7 @@ class IncarnBot(Bot):
             owners_ids=CLIENT_CONFIG.owners,
             help_command=None,
             allowed_mentions=AllowedMentions.none(),
-            activity=Activity(type=ActivityType.listening, name="/help")
+            activity=Activity(type=ActivityType.listening, name="/help"),
         )
 
     async def setup_database(self) -> None:
@@ -33,9 +27,18 @@ class IncarnBot(Bot):
         host = DATABASE_CONFIG.host
         port = DATABASE_CONFIG.port
         database = DATABASE_CONFIG.database
+
+        log.debug(
+            "Attempting to access the database '%s' on '%s:%s' as '%s' with password '%s'",
+            database,
+            host,
+            port,
+            username,
+            password,
+        )
+
         await Tortoise.init(
-            db_url=f"postgres://{username}:{password}@{host}:{port}/{database}",
-            modules={"models": ["bot.models"]}
+            db_url=f"postgres://{username}:{password}@{host}:{port}/{database}", modules={"models": ["bot.models"]}
         )
         await Tortoise.generate_schemas()
 
