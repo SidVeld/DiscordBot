@@ -6,10 +6,10 @@ from discord import Bot, Embed, SlashCommandGroup, option
 
 from bot.classes.extension import Extension
 
-from ._roll_colors import RollResultColors
+from ._colors import VTMColors
+from ._health_status import HealthStatus
 
-log = getLogger()
-
+log = getLogger(__name__)
 
 MESSAGE_TEMPLATE = """
 **Rolls**
@@ -18,19 +18,18 @@ MESSAGE_TEMPLATE = """
 {1}
 """
 
-
-WOUNDS = {
-    "None": 0,
-    "Bruised": 0,
-    "Hurt": 1,
-    "Injured": 1,
-    "Wounded": 2,
-    "Mauled": 2,
-    "Crippled": 5
+HEALTH_STATUSES = {
+    0: HealthStatus("Healthy", 0),
+    1: HealthStatus("Bruised", 0),
+    2: HealthStatus("Hurt", 1),
+    3: HealthStatus("Injured", 1),
+    4: HealthStatus("Wounded", 2),
+    5: HealthStatus("Mauled", 2),
+    6: HealthStatus("Crippled", 5),
+    7: HealthStatus("Incapacitated", 100)
 }
 
-
-WOUNDS_NAMES = [f"{name} (-{penalty})" for name, penalty in WOUNDS.items()]
+WOUNDS_OPTIONS = [number for number in range(8)]
 
 
 class VTM(Extension):
@@ -49,45 +48,19 @@ class VTM(Extension):
     vtm = SlashCommandGroup("vtm", "Commands for Vampire The Masquerade")
 
     @vtm.command(name="roll", description="Rolls the dices.")
-    @option(
-        name="amount",
-        description="Amount of dices.",
-        min_value=1,
-        max_value=15
-    )
-    @option(
-        name="difficulty",
-        description="Success threshold.",
-        min_value=1,
-        max_value=10
-    )
-    @option(
-        name="mod",
-        description="Bonus dices.",
-        min_value=0,
-        max_value=10
-    )
-    @option(
-        name="wounds",
-        description="What are the character's wounds right now? Affects the number of dice.",
-        choices=WOUNDS_NAMES
-    )
-    @option(
-        name="special",
-        description="Is this roll should explode tens?"
-    )
-    async def vtm_roll(
-        self,
-        ctx: AppCtx,
-        amount: int,
-        difficulty: int = 6,
-        mod: int = 0,
-        wounds: str = "None",
-        special: bool = False
-    ) -> None:
-        wound_name = wounds.split(" ")[0]
-        wound_penalty = WOUNDS[wound_name]
-        rolls = [random.randint(1, 10) for _ in range(amount + mod - wound_penalty)]
+    @option("amount", description="Amount of dices.", min_value=1, max_value=15)
+    @option("difficulty", description="Success threshold.", min_value=1, max_value=10, default=6)
+    @option("mod", description="Bonus dices.", min_value=0, max_value=10, default=0)
+    @option("wounds", int, description="Amount of character wounds", choices=WOUNDS_OPTIONS, default=0)
+    @option("special", description="Is this roll should explode tens?", default=False)
+    async def vtm_roll(self, ctx: AppCtx, amount: int, difficulty: int, mod: int, wounds: int, special: bool) -> None:
+        health_status = HEALTH_STATUSES[wounds]
+
+        if wounds == 7:
+            await ctx.response("Your character has taken too many wounds. Incapacitated.")
+            return
+
+        rolls = [random.randint(1, 10) for _ in range(amount + mod - health_status.penalty)]
         result = 0
         added_rolls = 0
 
@@ -108,25 +81,20 @@ class VTM(Extension):
 
         if result > 0:
             embed_title = "Success!"
-            embed_color = RollResultColors.SUCCESS
+            embed_color = VTMColors.GREEN
         elif result == 0:
             embed_title = "Unsuccessfully!"
-            embed_color = RollResultColors.UNSUCCESSFUL
+            embed_color = VTMColors.WHITE
         else:
             embed_title = "Failure!"
-            embed_color = RollResultColors.FAILURE
+            embed_color = VTMColors.RED
         embed_description = self.__get_roll_result_string(rolls)
 
-        embed = Embed(
-            title=embed_title,
-            description=embed_description,
-            color=embed_color
-        )
-
+        embed = Embed(title=embed_title, description=embed_description, color=embed_color)
         embed.add_field(name="Amount", value=str(amount))
         embed.add_field(name="Difficulty", value=str(difficulty))
         embed.add_field(name="Modifiers", value=str(mod))
-        embed.add_field(name="Wounds", value="None" if wound_name == "None" else wounds)
+        embed.add_field(name="Wounds", value=str(health_status))
         embed.add_field(name="Is special?", value=f"Yes (added {added_rolls})" if special else "No")
         embed.add_field(name="Result", value=f"{result} Successes")
 
@@ -137,7 +105,7 @@ class VTM(Extension):
             rolls,
             difficulty,
             mod,
-            wound_penalty,
+            health_status.penalty,
             special,
             result
         )
@@ -162,10 +130,10 @@ class VTM(Extension):
 
         if final_damage > 0:
             embed_title = f"{final_damage} damage done!"
-            embed_color = RollResultColors.FAILURE
+            embed_color = VTMColors.RED
         else:
             embed_title = "All damage absorbed!"
-            embed_color = RollResultColors.SUCCESS
+            embed_color = VTMColors.GREEN
         embed_description = self.__get_roll_result_string(rolls)
 
         embed = Embed(title=embed_title, description=embed_description, color=embed_color)
