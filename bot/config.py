@@ -37,20 +37,6 @@ class DebugConfig:
 
 
 @dataclass
-class PostgresConfig:
-    host: str
-    port: int
-    username: str
-    password: str
-    database: str
-
-
-@dataclass
-class SqliteConfig:
-    database: str
-
-
-@dataclass
 class DatabaseConfig:
     host: str
     port: str
