@@ -1,4 +1,4 @@
-class UnconvertibleVariableError(Exception):
+class InconvertibleVariableError(Exception):
     """
-    The UnconvertibleVariableError exception occurs when a variable type conversion attempt fails.
+    The InconvertibleVariableError exception occurs when a variable type conversion attempt fails.
     """
