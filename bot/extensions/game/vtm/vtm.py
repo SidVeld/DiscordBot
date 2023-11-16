@@ -11,7 +11,7 @@ from ._health_status import HealthStatus
 
 log = getLogger(__name__)
 
-MESSAGE_TEMPLATE = """
+ROLL_RESULT_TEMPLATE = """
 **Rolls**
 {0}
 **Sorted**
@@ -26,24 +26,20 @@ HEALTH_STATUSES = {
     4: HealthStatus("Wounded", 2),
     5: HealthStatus("Mauled", 2),
     6: HealthStatus("Crippled", 5),
-    7: HealthStatus("Incapacitated", 100)
+    7: HealthStatus("Incapacitated", 100),
 }
 
 WOUNDS_OPTIONS = [number for number in range(8)]
 
 
 class VTM(Extension):
-
     def __get_rolls_string(self, rolls: list[int], sort: bool = False) -> str:
         if sort:
             return " - ".join(str(roll) for roll in sorted(rolls))
         return " - ".join(str(roll) for roll in rolls)
 
     def __get_roll_result_string(self, rolls: list[int]) -> str:
-        return MESSAGE_TEMPLATE.format(
-            self.__get_rolls_string(rolls),
-            self.__get_rolls_string(rolls, True)
-        )
+        return ROLL_RESULT_TEMPLATE.format(self.__get_rolls_string(rolls), self.__get_rolls_string(rolls, True))
 
     vtm = SlashCommandGroup("vtm", "Commands for Vampire The Masquerade")
 
@@ -107,7 +103,7 @@ class VTM(Extension):
             mod,
             health_status.penalty,
             special,
-            result
+            result,
         )
 
         await ctx.respond(embed=embed)
@@ -117,7 +113,8 @@ class VTM(Extension):
     @option("stamina", description="How much stamina does the character have?", min_value=0, max_value=10)
     @option("armor", description="What is the character's armor rating?", default=0, min_value=0)
     @option("mod", description="What will be the modifier?", default=0)
-    async def vtm_soak(self, ctx: AppCtx, damage: int, stamina: int, *, armor: int, mod: int) -> None:
+    @option("guaranteed", description="Guaranteed amount of damage absorbed.", default=0)
+    async def vtm_soak(self, ctx: AppCtx, damage: int, stamina: int, armor: int, mod: int, guaranteed: int) -> None:
         rolls = [random.randint(1, 10) for _ in range(stamina + armor + mod)]
 
         difficult = 6
@@ -126,7 +123,7 @@ class VTM(Extension):
             if roll >= difficult:
                 absorbed_damage += 1
 
-        final_damage = max(damage - absorbed_damage, 0)
+        final_damage = max(damage - absorbed_damage - guaranteed, 0)
 
         if final_damage > 0:
             embed_title = f"{final_damage} damage done!"
@@ -142,6 +139,7 @@ class VTM(Extension):
         embed.add_field(name="Modifiers", value=str(mod))
         embed.add_field(name="Damage", value=str(damage))
         embed.add_field(name="Absorbed", value=str(absorbed_damage))
+        embed.add_field(name="Guaranteed", value=str(guaranteed))
         embed.add_field(name="Final damage", value=str(final_damage))
         await ctx.respond(embed=embed)
 
