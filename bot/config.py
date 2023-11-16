@@ -57,7 +57,9 @@ CLIENT_CONFIG = ClientConfig(
 
 
 DEBUG_CONFIG = DebugConfig(
-    get_bool(os.getenv("DEBUG_ENABLED")), get_bool(os.getenv("DEBUG_ORM")), get_list(os.getenv("DEBUG_GUILDS"))
+    get_bool(os.getenv("DEBUG_ENABLED")),
+    get_bool(os.getenv("DEBUG_ORM")),
+    get_list(os.getenv("DEBUG_GUILDS"))
 )
 
 
