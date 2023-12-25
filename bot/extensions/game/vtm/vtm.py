@@ -53,7 +53,7 @@ class VTM(Extension):
         health_status = HEALTH_STATUSES[wounds]
 
         if wounds == 7:
-            await ctx.response("Your character has taken too many wounds. Incapacitated.")
+            await ctx.respond("Your character has taken too many wounds. Incapacitated.")
             return
 
         rolls = [random.randint(1, 10) for _ in range(amount + mod - health_status.penalty)]
