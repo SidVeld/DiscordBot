@@ -83,8 +83,8 @@ CLIENT_CONFIG = ClientConfig(
 
 
 DEBUG_CONFIG = DebugConfig(
-    bool(os.getenv("DEBUG_ENABLED")),
-    bool(os.getenv("DEBUG_ORM")),
+    to_bool(get_env_value("DEBUG_ENABLED")),
+    to_bool(get_env_value("DEBUG_ORM")),
     to_list_int(get_env_value("DEBUG_GUILDS"))
 )
 
