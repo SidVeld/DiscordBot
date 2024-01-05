@@ -43,7 +43,7 @@ class ExtensionLoader:
         loaded = 0
         not_loaded = 0
         for extension in extensions:
-            extension_name =  extension.split(".")[-1]
+            extension_name = extension.split(".")[-1]
             try:
                 bot.load_extension(extension)
                 log.debug("Extension loaded: '%s'", extension_name)
