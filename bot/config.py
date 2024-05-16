@@ -3,10 +3,20 @@ from dataclasses import dataclass
 
 from dotenv import load_dotenv
 
-from .classes.exceptions import InconvertibleVariableError
+from .classes.exceptions import InconvertibleVariableError, NoneTypeVariableError
 
 
-def get_bool(env_value: str) -> bool:
+def get_env_value(env_name: str) -> str:
+    env_value = os.getenv(env_name)
+
+    if env_value is None:
+        message = f"Variable `{env_name}` is None."
+        raise NoneTypeVariableError(message)
+
+    return env_value
+
+
+def to_bool(env_value: str) -> bool:
     """
     Converts the type of the received environment variable to bool.
 
@@ -27,7 +37,7 @@ def get_bool(env_value: str) -> bool:
             raise InconvertibleVariableError(message)
 
 
-def get_list(env_value: str) -> list[int]:
+def to_list_int(env_value: str) -> list[int]:
     """
     Converts the type of the received environment variable to list of integers.
 
@@ -59,30 +69,32 @@ class DatabaseConfig:
     username: str
     password: str
     database: str
+    setup_database: bool
 
 
 load_dotenv()
 
 
 CLIENT_CONFIG = ClientConfig(
-    os.getenv("BOT_PREFIX"),
-    os.getenv("BOT_TOKEN"),
-    get_list(os.getenv("BOT_OWNERS")),
-    get_bool(os.getenv("BOT_SYNC_COMMANDS")),
+    get_env_value("BOT_PREFIX"),
+    get_env_value("BOT_TOKEN"),
+    to_list_int(get_env_value("BOT_OWNERS")),
+    to_bool(get_env_value("BOT_SYNC_COMMANDS")),
 )
 
 
 DEBUG_CONFIG = DebugConfig(
-    get_bool(os.getenv("DEBUG_ENABLED")),
-    get_bool(os.getenv("DEBUG_ORM")),
-    get_list(os.getenv("DEBUG_GUILDS"))
+    to_bool(get_env_value("DEBUG_ENABLED")),
+    to_bool(get_env_value("DEBUG_ORM")),
+    to_list_int(get_env_value("DEBUG_GUILDS")),
 )
 
 
 DATABASE_CONFIG = DatabaseConfig(
-    os.getenv("POSTGRES_HOST"),
-    os.getenv("POSTGRES_PORT"),
-    os.getenv("POSTGRES_USER"),
-    os.getenv("POSTGRES_PASSWORD"),
-    os.getenv("POSTGRES_DB"),
+    get_env_value("POSTGRES_HOST"),
+    get_env_value("POSTGRES_PORT"),
+    get_env_value("POSTGRES_USER"),
+    get_env_value("POSTGRES_PASSWORD"),
+    get_env_value("POSTGRES_DB"),
+    to_bool(get_env_value("SETUP_DATABASE")),
 )
