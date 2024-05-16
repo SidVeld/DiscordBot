@@ -12,7 +12,9 @@ class AddGrudgeModal(ui.Modal):
 
     async def callback(self, interaction: Interaction) -> None:
         assert interaction.user
-        user = await UserModel.get(user_id=interaction.user.id)
+        user, _ = await UserModel.get_or_create(
+            user_id=interaction.user.id, defaults={"username": interaction.user.name}
+        )
         title = self.children[0].value
         content = self.children[1].value
         await GrudgeModel.create(title=title, content=content, user=user)

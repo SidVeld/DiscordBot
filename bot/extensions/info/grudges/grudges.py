@@ -81,40 +81,43 @@ class Grudges(Extension):
     @option("compact", description="Should you view grudges in compact mode?")
     @option("hidden", description="Should you view grudges in private view?")
     async def list_grudges(self, ctx: AppCtx, compact: bool = True, hidden: bool = True) -> None:
-        user = await UserModel.get(user_id=ctx.author.id)
+        user, _ = await UserModel.get_or_create(
+            user_id=ctx.author.id,
+            defaults={"username": ctx.author.name},
+        )
+
         grudges = await user.grudges.all()
 
         if len(grudges) < 1:
             await ctx.respond("No grudges!")
             return
 
-        match compact:
-            case False:
-                buttons = [
-                    PaginatorButton("first", "<<", style=ButtonStyle.gray),
-                    PaginatorButton("prev", "<", style=ButtonStyle.green),
-                    PaginatorButton("page_indicator", style=ButtonStyle.gray, disabled=True),
-                    PaginatorButton("next", ">", style=ButtonStyle.green),
-                    PaginatorButton("last", ">>", style=ButtonStyle.gray)
-                ]
-                paginator = Paginator(
-                    self.__get_pages(grudges),
-                    show_indicator=True,
-                    use_default_buttons=False,
-                    custom_buttons=buttons
-                )
-                await paginator.respond(ctx.interaction)
+        if compact:
+            embed = Embed(title="Grudges: compact")
+            grudges_strings = []
+            for grudge in grudges:
+                title = f"[R] {grudge.title}" if grudge.revenged else grudge.title
+                grudges_strings.append(f"`{grudge.grudge_id}`: {title}")
+            embed.description = "\n".join(grudges_strings)
+            embed.set_footer(text=f"Total: {len(grudges)}")
 
-            case True:
-                embed = Embed(title="Grudges: compact")
-                grudges_strings = []
-                for grudge in grudges:
-                    title = f"[R] {grudge.title}" if grudge.revenged else grudge.title
-                    grudges_strings.append(f"`{grudge.grudge_id}`: {title}")
-                embed.description = "\n".join(grudges_strings)
-                embed.set_footer(text=f"Total: {len(grudges)}")
+            await ctx.respond(embed=embed, ephemeral=hidden)
+            return
 
-                await ctx.respond(embed=embed, ephemeral=hidden)
+        buttons = [
+            PaginatorButton("first", "<<", style=ButtonStyle.gray),
+            PaginatorButton("prev", "<", style=ButtonStyle.green),
+            PaginatorButton("page_indicator", style=ButtonStyle.gray, disabled=True),
+            PaginatorButton("next", ">", style=ButtonStyle.green),
+            PaginatorButton("last", ">>", style=ButtonStyle.gray)
+        ]
+        paginator = Paginator(
+            self.__get_pages(grudges),
+            show_indicator=True,
+            use_default_buttons=False,
+            custom_buttons=buttons
+        )
+        await paginator.respond(ctx.interaction)
 
     @grudge.command(name="mark_as_revenged", description="Marks grudge as revenged or unrevenged.")
     @option(name="grudge_id", description="Grudge's id.")
