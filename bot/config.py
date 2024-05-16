@@ -69,6 +69,7 @@ class DatabaseConfig:
     username: str
     password: str
     database: str
+    setup_database: bool
 
 
 load_dotenv()
@@ -85,7 +86,7 @@ CLIENT_CONFIG = ClientConfig(
 DEBUG_CONFIG = DebugConfig(
     to_bool(get_env_value("DEBUG_ENABLED")),
     to_bool(get_env_value("DEBUG_ORM")),
-    to_list_int(get_env_value("DEBUG_GUILDS"))
+    to_list_int(get_env_value("DEBUG_GUILDS")),
 )
 
 
@@ -95,4 +96,5 @@ DATABASE_CONFIG = DatabaseConfig(
     get_env_value("POSTGRES_USER"),
     get_env_value("POSTGRES_PASSWORD"),
     get_env_value("POSTGRES_DB"),
+    to_bool(get_env_value("SETUP_DATABASE")),
 )

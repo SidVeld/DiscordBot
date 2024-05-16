@@ -43,7 +43,8 @@ class IncarnBot(Bot):
         await Tortoise.generate_schemas()
 
     async def start(self, token: str, *, reconnect: bool = True) -> None:
-        await self.setup_database()
+        if DATABASE_CONFIG.setup_database:
+            await self.setup_database()
         await super().start(token, reconnect=reconnect)
 
     async def close(self) -> None:
