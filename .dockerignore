@@ -1,0 +1,9 @@
+Dockerfile
+.dockerignore
+README.md
+.git
+.venv
+.vscode
+.ruff_cache
+logs
+
