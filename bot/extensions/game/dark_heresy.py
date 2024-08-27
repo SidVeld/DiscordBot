@@ -3,8 +3,8 @@ import random
 from discord import ApplicationContext as AppCtx
 from discord import Embed, SlashCommandGroup, option
 
+from bot.classes.edgar_bot import EdgarBot
 from bot.classes.extension import Extension
-from bot.classes.incarn_bot import IncarnBot
 
 from ._roll_colors import RollResultColors
 
@@ -38,6 +38,6 @@ class DarkHeresy(Extension):
         await ctx.respond(embed=embed)
 
 
-def setup(bot: IncarnBot) -> None:
+def setup(bot: EdgarBot) -> None:
     bot.add_cog(DarkHeresy(bot))
 

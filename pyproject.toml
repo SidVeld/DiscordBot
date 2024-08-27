@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "incarn"
+name = "edgar"
 version = "0.1.2"
 description = "A bot for friends and enemies."
 authors = ["SidVeld <sidveld@gmail.com>"]

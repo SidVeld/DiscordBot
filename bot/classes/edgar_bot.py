@@ -8,7 +8,7 @@ from ..config import CLIENT_CONFIG, DATABASE_CONFIG
 log = getLogger(__name__)
 
 
-class IncarnBot(Bot):
+class EdgarBot(Bot):
     def __init__(self) -> None:
         intents = Intents(members=True, messages=True, message_content=True, guilds=True, bans=True)
 
@@ -52,7 +52,7 @@ class IncarnBot(Bot):
         await super().close()
 
     async def on_ready(self) -> None:
-        log.info("Incarn is ready.")
+        log.info("Edgar is ready.")
 
     def run(self) -> None:
         super().run(CLIENT_CONFIG.token)

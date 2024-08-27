@@ -7,7 +7,7 @@ from typing import Iterator
 from discord import NoEntryPointError
 
 from .. import extensions
-from ..classes.incarn_bot import IncarnBot
+from ..classes.edgar_bot import EdgarBot
 
 log = getLogger()
 
@@ -35,7 +35,7 @@ class ExtensionLoader:
             yield module.name
 
     @staticmethod
-    def load_extensions(bot: IncarnBot) -> None:
+    def load_extensions(bot: EdgarBot) -> None:
         extensions = sorted(set(ExtensionLoader._walk_extensions()))
         log.debug("Extensions set is %s", extensions)
         log.debug("Extensions count: %s", len(extensions))

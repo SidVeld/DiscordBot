@@ -6,7 +6,7 @@ VERSION = get_version()
 QUOTE = get_quote()
 
 console = Console()
-console.print(f"INCARN {VERSION}", style="yellow", highlight=False)
+console.print(f"EDGAR {VERSION}", style="bold yellow", highlight=False)
 console.print(QUOTE, style="red")
 console.print()
 

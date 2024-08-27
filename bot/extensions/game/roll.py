@@ -3,8 +3,8 @@ import random
 from discord import ApplicationContext as AppCtx
 from discord import Embed, option, slash_command
 
+from bot.classes.edgar_bot import EdgarBot
 from bot.classes.extension import Extension
-from bot.classes.incarn_bot import IncarnBot
 
 
 class Roll(Extension):
@@ -48,5 +48,5 @@ class Roll(Extension):
         await ctx.respond(embed=result_embed)
 
 
-def setup(bot: IncarnBot) -> None:
+def setup(bot: EdgarBot) -> None:
     bot.add_cog(Roll(bot))

@@ -1,12 +1,12 @@
 from logging import getLogger
 
-from .classes.incarn_bot import IncarnBot
+from .classes.edgar_bot import EdgarBot
 from .utils import ExtensionLoader
 
 log = getLogger(__name__)
 
 try:
-    bot = IncarnBot()
+    bot = EdgarBot()
     ExtensionLoader.load_extensions(bot)
     bot.run()
 

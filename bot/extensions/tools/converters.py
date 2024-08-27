@@ -4,8 +4,8 @@ from logging import getLogger
 from discord import ApplicationContext as AppCtx
 from discord import SlashCommandGroup, option
 
+from bot.classes.edgar_bot import EdgarBot
 from bot.classes.extension import Extension
-from bot.classes.incarn_bot import IncarnBot
 
 log = getLogger(__name__)
 
@@ -71,5 +71,5 @@ class Converters(Extension):
         await ctx.respond(f"`{amount}` {from_type} should be equal to `{result}` {to_type}")
 
 
-def setup(bot: IncarnBot):
+def setup(bot: EdgarBot):
     bot.add_cog(Converters(bot))
